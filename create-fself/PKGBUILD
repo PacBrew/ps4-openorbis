@@ -2,31 +2,31 @@
 
 pkgname=ps4-openorbis-create-fself
 pkgver=1.2
-pkgrel=1
+pkgrel=2
 pkgdesc='create-fself for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/create-fself'
 license=('MIT')
 options=(!strip libtool)
 source=(
-  "https://github.com/OpenOrbis/create-fself/archive/refs/tags/v$pkgver.tar.gz"
+  "https://github.com/OpenOrbis/create-fself/archive/30d2e10507f55124cf21e85e19825482e4f93c87.zip"
   "https://go.dev/dl/go1.17.5.linux-amd64.tar.gz"
 )
 sha256sums=(
-  '7cd450d5464a407f24dfa40b614b1fcdb7300c4d62057708daa53d1a14054696'
+  'f232b59abb74324125665041e7ed152f4556dd7b37b284b62c260b2d5f6cf868'
   'bd78114b0d441b029c8fe0341f4910370925a4d270a6a590668840675b0c653e'
 )
 groups=('ps4-openorbis')
 
 build() {
-  cd create-fself-$pkgver
+  cd create-fself-30d2e10507f55124cf21e85e19825482e4f93c87
 
   cd cmd/create-fself
   ../../../go/bin/go build -o create-fself -modfile=go-linux.mod
 }
 
 package() {
-  cd create-fself-$pkgver
+  cd create-fself-30d2e10507f55124cf21e85e19825482e4f93c87
   install -d $pkgdir/opt/pacbrew/ps4/openorbis/bin/linux
   install -m755 cmd/create-fself/create-fself $pkgdir/opt/pacbrew/ps4/openorbis/bin/create-fself
   cd $pkgdir/opt/pacbrew/ps4/openorbis/bin/linux && ln -s ../create-fself create-fself
