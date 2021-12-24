@@ -1,0 +1,27 @@
+# Maintainer: cpasjuste <cpasjuste@gmail.com>
+
+pkgname=ps4-openorbis-vars
+pkgver=1.0.0
+pkgrel=2
+pkgdesc='helper scripts to set variables for ps4 toolchain'
+arch=('any')
+url='https://github.com/PacBrew'
+source=('ps4vars.sh' 'ps4.cmake' 'openorbis-cmake')
+options=(!strip)
+groups=('ps4-orbisdev')
+
+sha256sums=(
+  '2c7b953e0784581a94852e7a0ff421f0e0c40cf50ea711f15f9cad5a39172321' # ps4vars.sh
+  '1f003606ab82ab9aa03567a1a24477ec2c39fffbc7d7249f7439b203ee482274' # ps4.cmake
+  '6ee834cd78fa57cff97fbbbf81080a68797c60b54c69e29009bf27fe946736c5' # openorbis-cmake
+)
+
+package() {
+  install -d "$pkgdir"/opt/pacbrew/ps4/openorbis
+  install -Dm644 ps4vars.sh "$pkgdir"/opt/pacbrew/ps4/openorbis
+  
+  install -d "$pkgdir"/opt/pacbrew/ps4/openorbis/cmake
+  install -Dm644 ps4.cmake "$pkgdir"/opt/pacbrew/ps4/openorbis/cmake
+  install -d "$pkgdir"/opt/pacbrew/ps4/openorbis/usr/bin
+  install -Dm755 openorbis-cmake "$pkgdir"/opt/pacbrew/ps4/openorbis/usr/bin
+}
