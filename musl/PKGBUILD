@@ -29,6 +29,6 @@ package() {
   cd musl-$pkgver
   make DESTDIR="${pkgdir}" install
   
-  # "ps4-libcxx-openorbis" package will merge compiler-rt into libc
+  # "ps4-openorbis-libcxx" package will merge compiler-rt into libc
   mv "${pkgdir}"/opt/pacbrew/ps4/openorbis/lib/libc.a "${pkgdir}"/opt/pacbrew/ps4/openorbis/lib/libcmusl.a
 }

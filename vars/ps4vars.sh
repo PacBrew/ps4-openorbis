@@ -24,6 +24,6 @@ export CFLAGS="${ARCH} -D__PS4__ -D__OPENORBIS__ -O2 -fPIC -funwind-tables -isys
 export CXXFLAGS="${CFLAGS} -isystem ${OPENORBIS}/include/c++/v1"
 export CPPFLAGS="${CFLAGS} -isystem ${OPENORBIS}/include/c++/v1"
 
-export LIBS="-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib ${OPENORBIS}/lib/crt1.o"
-export LDFLAGS="${ARCH} ${LIBS} -m elf_x86_64 -pie --script ${OPENORBIS}/link.x --eh-frame-hdr"
-
+export LIBS="-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -nostdlib -lc -lkernel"
+export LDFLAGS="${ARCH} -fuse-ld=lld -Wl,-melf_x86_64 -Wl,-pie -Wl,--script=${OPENORBIS}/link.x -Wl,--eh-frame-hdr ${LIBS}"
+#${OPENORBIS}/lib/crt1.o
