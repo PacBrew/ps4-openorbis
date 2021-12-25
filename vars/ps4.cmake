@@ -45,7 +45,7 @@ set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
 
 set(PS4_ARCH_SETTINGS "--target=x86_64-pc-freebsd12-elf")
 set(PS4_COMMON_INCLUDES "-isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include")
-set(PS4_COMMON_FLAGS "${PS4_ARCH_SETTINGS} -D__PS4__ -D__OPENORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
+set(PS4_COMMON_FLAGS "${PS4_ARCH_SETTINGS} -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
 set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -nostdlib -lc -lkernel")
 
 set(CMAKE_C_FLAGS_INIT "${PS4_COMMON_FLAGS}")
