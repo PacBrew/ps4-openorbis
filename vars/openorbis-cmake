@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
 
-exec cmake -DCMAKE_TOOLCHAIN_FILE=${OPENORBIS}/cmake/ps4.cmake "$@"s
+exec cmake -DCMAKE_TOOLCHAIN_FILE=${OPENORBIS}/cmake/ps4.cmake "$@"

@@ -46,14 +46,15 @@ set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
 set(PS4_ARCH_SETTINGS "--target=x86_64-pc-freebsd12-elf")
 set(PS4_COMMON_INCLUDES "-isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include")
 set(PS4_COMMON_FLAGS "${PS4_ARCH_SETTINGS} -D__PS4__ -D__OPENORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
-set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib ${OPENORBIS}/lib/crt1.o")
+set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -lc -lkernel")
+#-nostdlib
 
 set(CMAKE_C_FLAGS_INIT "${PS4_COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS_INIT "${PS4_COMMON_FLAGS} -I${OPENORBIS}/include/c++/v1")
 set(CMAKE_ASM_FLAGS_INIT "${PS4_COMMON_FLAGS}")
 
-set(PS4_LINKER_FLAGS "-m elf_x86_64 -pie --script ${OPENORBIS}/link.x --eh-frame-hdr")
-set(CMAKE_EXE_LINKER_FLAGS_INIT "${PS4_ARCH_SETTINGS} ${PS4_COMMON_LIBS} ${PS4_LINKER_FLAGS}")
+set(PS4_LINKER_FLAGS "-fuse-ld=lld -Wl,-melf_x86_64 -Wl,-pie -Wl,--script ${OPENORBIS}/link.x -Wl,-z,norelro -Wl,--eh-frame-hdr")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${PS4_ARCH_SETTINGS} ${PS4_COMMON_LIBS} ${PS4_LINKER_FLAGS} ${OPENORBIS}/lib/crt1.o")
 
 # Start find_package in config mode
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
