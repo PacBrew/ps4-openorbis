@@ -2,7 +2,7 @@
 
 pkgname=ps4-openorbis-create-gp4
 pkgver=1.0
-pkgrel=1
+pkgrel=2
 pkgdesc='create-gp4 for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/create-gp4'
@@ -27,6 +27,7 @@ build() {
 
 package() {
   cd create-gp4-$pkgver
-  install -d $pkgdir/opt/pacbrew/ps4/openorbis/bin
+  install -d $pkgdir/opt/pacbrew/ps4/openorbis/bin/linux
   install -m755 cmd/create-gp4/create-gp4 $pkgdir/opt/pacbrew/ps4/openorbis/bin/create-gp4
+  cd $pkgdir/opt/pacbrew/ps4/openorbis/bin/linux && ln -s ../create-gp4 create-gp4
 }
