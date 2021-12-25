@@ -46,8 +46,7 @@ set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
 set(PS4_ARCH_SETTINGS "--target=x86_64-pc-freebsd12-elf")
 set(PS4_COMMON_INCLUDES "-isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include")
 set(PS4_COMMON_FLAGS "${PS4_ARCH_SETTINGS} -D__PS4__ -D__OPENORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
-set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -lc -lkernel")
-#-nostdlib
+set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -nostdlib -lc -lkernel")
 
 set(CMAKE_C_FLAGS_INIT "${PS4_COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS_INIT "${PS4_COMMON_FLAGS} -I${OPENORBIS}/include/c++/v1")
@@ -64,4 +63,17 @@ find_program(PKG_CONFIG_EXECUTABLE NAMES openorbis-pkg-config HINTS "${OPENORBIS
 if (NOT PKG_CONFIG_EXECUTABLE)
     message(WARNING "Could not find openorbis-pkg-config: try installing ps4-openorbis-pkg-config")
 endif ()
+
+function(add_self project)
+    add_custom_command(
+            OUTPUT "${project}.self"
+            COMMAND ${CMAKE_COMMAND} -E env "OO_PS4_TOOLCHAIN=${OPENORBIS}" ${OPENORBIS}/bin/create-fself -in=${project} -out=${project}.oelf --eboot eboot.bin --paid 0x3800000000000011
+            VERBATIM
+            DEPENDS "${project}"
+    )
+    add_custom_target(
+            "${project}_self" ALL
+            DEPENDS "${project}.self"
+    )
+endfunction()
 
