@@ -43,17 +43,21 @@ set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
 
 ###################################################################
 
-set(PS4_ARCH_SETTINGS "--target=x86_64-pc-freebsd12-elf")
 set(PS4_COMMON_INCLUDES "-isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include")
-set(PS4_COMMON_FLAGS "${PS4_ARCH_SETTINGS} -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
-set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -nostdlib -lc -lkernel")
+set(PS4_COMMON_FLAGS "--target=x86_64-pc-freebsd12-elf -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
+set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -lc -lkernel")
 
 set(CMAKE_C_FLAGS_INIT "${PS4_COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS_INIT "${PS4_COMMON_FLAGS} -I${OPENORBIS}/include/c++/v1")
 set(CMAKE_ASM_FLAGS_INIT "${PS4_COMMON_FLAGS}")
 
-set(PS4_LINKER_FLAGS "-fuse-ld=lld -Wl,-melf_x86_64 -Wl,-pie -Wl,--script ${OPENORBIS}/link.x -Wl,-z,norelro -Wl,--eh-frame-hdr")
-set(CMAKE_EXE_LINKER_FLAGS_INIT "${PS4_ARCH_SETTINGS} ${PS4_COMMON_LIBS} ${PS4_LINKER_FLAGS} ${OPENORBIS}/lib/crt1.o")
+set(PS4_LINKER_FLAGS "-m elf_x86_64 -pie --eh-frame-hdr --script ${OPENORBIS}/link.x ${OPENORBIS}/lib/crt1.o")
+# crt1.o may be already added to LDFLAGS from "ps4vars.sh", so remove LDFLAGS env (todo: find a better way...)
+set(ENV{LDFLAGS} "" CACHE STRING FORCE)
+
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${PS4_LINKER_FLAGS} ${PS4_COMMON_LIBS}")
+set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> -o <TARGET> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> <LINK_LIBRARIES>") # <FLAGS>
+set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> -o <TARGET> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  <LINK_LIBRARIES>") # <FLAGS>
 
 # Start find_package in config mode
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
@@ -67,7 +71,7 @@ endif ()
 function(add_self project)
     add_custom_command(
             OUTPUT "${project}.self"
-            COMMAND ${CMAKE_COMMAND} -E env "OO_PS4_TOOLCHAIN=${OPENORBIS}" ${OPENORBIS}/bin/create-fself -in=${project} -out=${project}.oelf --eboot eboot.bin --paid 0x3800000000000011
+            COMMAND ${CMAKE_COMMAND} -E env "OO_PS4_TOOLCHAIN=${OPENORBIS}" "${OPENORBIS}/bin/create-fself" "-in=${project}" "-out=${project}.oelf" "--eboot" "eboot.bin" "--paid" "0x3800000000000011"
             VERBATIM
             DEPENDS "${project}"
     )
@@ -76,4 +80,3 @@ function(add_self project)
             DEPENDS "${project}.self"
     )
 endfunction()
-
