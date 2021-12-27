@@ -18,9 +18,10 @@ list(APPEND CMAKE_MODULE_PATH "${OPENORBIS}/cmake")
 
 set(PS4 TRUE)
 
-set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_VERSION 1)
-set(CMAKE_SYSTEM_PROCESSOR "x86_64")
+set(CMAKE_SYSTEM_NAME FreeBSD)
+set(CMAKE_SYSTEM_PROCESSOR x86_64)
+set(TARGET x86_64-pc-freebsd-elf)
+set(CMAKE_SYSTEM_VERSION 12)
 set(CMAKE_CROSSCOMPILING 1)
 
 set(CMAKE_ASM_COMPILER ${OPENORBIS}/bin/clang CACHE PATH "")
@@ -44,7 +45,7 @@ set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
 ###################################################################
 
 set(PS4_COMMON_INCLUDES "-isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include")
-set(PS4_COMMON_FLAGS "--target=x86_64-pc-freebsd12-elf -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
+set(PS4_COMMON_FLAGS "--target=x86_64-pc-freebsd12-elf -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -D__BSD_VISIBLE -D_BSD_SOURCE -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
 set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -lc -lkernel")
 
 set(CMAKE_C_FLAGS_INIT "${PS4_COMMON_FLAGS}")
@@ -78,5 +79,36 @@ function(add_self project)
     add_custom_target(
             "${project}_self" ALL
             DEPENDS "${project}.self"
+    )
+endfunction()
+
+function(add_pkg project title-id title version)
+    add_custom_command(
+            OUTPUT "${project}.pkg"
+            # copy required files to binary directory
+            COMMAND cp -rf ${CMAKE_SOURCE_DIR}/sce_sys .
+            COMMAND cp -rf ${CMAKE_SOURCE_DIR}/sce_module .
+            # generate sfo
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_new sce_sys/param.sfo
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo APP_TYPE --type Integer --maxsize 4 --value 1
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo APP_VER --type Utf8 --maxsize 8 --value "${version}"
+	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value 0
+	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo CATEGORY --type Utf8 --maxsize 4 --value "gd"
+	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "IV0001-${title-id}_00-${title-id}0000000"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo DOWNLOAD_DATA_SIZE --type Integer --maxsize 4 --value 0
+	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo SYSTEM_VER --type Integer --maxsize 4 --value 0
+	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo TITLE --type Utf8 --maxsize 128 --value "${title}"
+	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo TITLE_ID --type Utf8 --maxsize 12 --value "${title-id}"
+	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo VERSION --type Utf8 --maxsize 8 --value "${version}"
+            # generate gp4 file
+            COMMAND "${OPENORBIS}/bin/linux/create-gp4" -out pkg.gp4 --content-id "IV0001-${title-id}_00-${title-id}0000000" --files "eboot.bin sce_sys/about/right.sprx sce_sys/param.sfo sce_sys/icon0.png sce_module/libc.prx sce_module/libSceFios2.prx"
+            # generate pkg
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" pkg_build pkg.gp4 .
+            VERBATIM
+            DEPENDS "${project}.self"
+    )
+    add_custom_target(
+            "${project}_pkg" ALL
+            DEPENDS "${project}.pkg"
     )
 endfunction()
