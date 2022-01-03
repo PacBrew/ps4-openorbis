@@ -18,7 +18,7 @@ list(APPEND CMAKE_MODULE_PATH "${OPENORBIS}/cmake")
 
 set(PS4 TRUE)
 
-set(CMAKE_SYSTEM_NAME FreeBSD)
+set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR x86_64)
 set(TARGET x86_64-pc-freebsd-elf)
 set(CMAKE_SYSTEM_VERSION 12)
@@ -44,8 +44,10 @@ set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
 
 ###################################################################
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(PS4_COMMON_INCLUDES "-isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include")
-set(PS4_COMMON_FLAGS "--target=x86_64-pc-freebsd12-elf -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -D__BSD_VISIBLE -D_BSD_SOURCE -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
+set(PS4_COMMON_FLAGS "--target=x86_64-pc-freebsd12-elf -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
 set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -lc -lkernel")
 
 set(CMAKE_C_FLAGS_INIT "${PS4_COMMON_FLAGS}")
@@ -70,9 +72,10 @@ if (NOT PKG_CONFIG_EXECUTABLE)
 endif ()
 
 function(add_self project)
+     set(AUTH_INFO "000000000000000000000000001C004000FF000000000080000000000000000000000000000000000000008000400040000000000000008000000000000000080040FFFF000000F000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
     add_custom_command(
             OUTPUT "${project}.self"
-            COMMAND ${CMAKE_COMMAND} -E env "OO_PS4_TOOLCHAIN=${OPENORBIS}" "${OPENORBIS}/bin/create-fself" "-in=${project}" "-out=${project}.oelf" "--eboot" "eboot.bin" "--paid" "0x3800000000000011"
+            COMMAND ${CMAKE_COMMAND} -E env "OO_PS4_TOOLCHAIN=${OPENORBIS}" "${OPENORBIS}/bin/create-fself" "-in=${project}" "-out=${project}.oelf" "--eboot" "eboot.bin" "--paid" "0x3800000000000011" "--authinfo" "${AUTH_INFO}"
             VERBATIM
             DEPENDS "${project}"
     )

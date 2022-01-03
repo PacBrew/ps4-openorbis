@@ -12,7 +12,7 @@ groups=('ps4-orbisdev')
 
 sha256sums=(
   '8b0397cdb0560cee140fa626add928c3409f30d3f9b01febc11e7df74cb2401a' # ps4vars.sh
-  '1e53e7077b78e51b69cd33b14e0dcce45e0b8889600e317d8a5db1cfde0a9cf3' # ps4.cmake
+  '5bc47f85d44fee337c1e0da6f03b5e2ffbf669c7d332b50ed0fbb1ec9a186e06' # ps4.cmake
   '0a32ce4e9a41e91df50e036f9f22b2aafac2778ae8286b8b7fc84fafb38aa38a' # openorbis-cmake
 )
 
