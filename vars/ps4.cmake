@@ -72,10 +72,10 @@ if (NOT PKG_CONFIG_EXECUTABLE)
 endif ()
 
 function(add_self project)
-     set(AUTH_INFO "000000000000000000000000001C004000FF000000000080000000000000000000000000000000000000008000400040000000000000008000000000000000080040FFFF000000F000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+    set(AUTH_INFO "000000000000000000000000001C004000FF000000000080000000000000000000000000000000000000008000400040000000000000008000000000000000080040FFFF000000F000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
     add_custom_command(
             OUTPUT "${project}.self"
-            COMMAND ${CMAKE_COMMAND} -E env "OO_PS4_TOOLCHAIN=${OPENORBIS}" "${OPENORBIS}/bin/create-fself" "-in=${project}" "-out=${project}.oelf" "--eboot" "eboot.bin" "--paid" "0x3800000000000011" "--authinfo" "${AUTH_INFO}"
+            COMMAND ${CMAKE_COMMAND} -E env "OO_PS4_TOOLCHAIN=${OPENORBIS}" "${OPENORBIS}/bin/create-fself" "-in=${project}" "-out=${project}.oelf" "--eboot" "eboot.bin" "--paid" "0x3800000000000035" "--authinfo" "${AUTH_INFO}"
             VERBATIM
             DEPENDS "${project}"
     )
@@ -85,28 +85,36 @@ function(add_self project)
     )
 endfunction()
 
-function(add_pkg project title-id title version)
+function(add_pkg project pkgdir title-id title version)
+    execute_process(
+            COMMAND bash -c "cd ${pkgdir} && find . -type f | cut -d '/' -f2- | tr '\n' ' '"
+            OUTPUT_VARIABLE PKG_ASSETS_FILES
+    )
     add_custom_command(
             OUTPUT "${project}.pkg"
             # copy required files to binary directory
-            COMMAND cp -rf ${CMAKE_SOURCE_DIR}/sce_sys .
-            COMMAND cp -rf ${CMAKE_SOURCE_DIR}/sce_module .
+            COMMAND ${CMAKE_COMMAND} -E copy eboot.bin ${pkgdir}/eboot.bin
             # generate sfo
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_new sce_sys/param.sfo
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo APP_TYPE --type Integer --maxsize 4 --value 1
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo APP_VER --type Utf8 --maxsize 8 --value "${version}"
-	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value 0
-	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo CATEGORY --type Utf8 --maxsize 4 --value "gd"
-	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "IV0001-${title-id}_00-${title-id}0000000"
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo DOWNLOAD_DATA_SIZE --type Integer --maxsize 4 --value 0
-	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo SYSTEM_VER --type Integer --maxsize 4 --value 0
-	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo TITLE --type Utf8 --maxsize 128 --value "${title}"
-	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo TITLE_ID --type Utf8 --maxsize 12 --value "${title-id}"
-	          COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry sce_sys/param.sfo VERSION --type Utf8 --maxsize 8 --value "${version}"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_new ${pkgdir}/sce_sys/param.sfo
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_TYPE --type Integer --maxsize 4 --value 1
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_VER --type Utf8 --maxsize 8 --value "${version}"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value 0
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CATEGORY --type Utf8 --maxsize 4 --value "gde"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo FORMAT --type Utf8 --maxsize 4 --value 'obs'
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "IV0001-${title-id}_00-${title-id}0000000"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo DOWNLOAD_DATA_SIZE --type Integer --maxsize 4 --value 0
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo SYSTEM_VER --type Integer --maxsize 4 --value 1020
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo TITLE --type Utf8 --maxsize 128 --value "${title}"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo TITLE_ID --type Utf8 --maxsize 12 --value "${title-id}"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo VERSION --type Utf8 --maxsize 8 --value "${version}"
             # generate gp4 file
-            COMMAND "${OPENORBIS}/bin/linux/create-gp4" -out pkg.gp4 --content-id "IV0001-${title-id}_00-${title-id}0000000" --files "eboot.bin sce_sys/about/right.sprx sce_sys/param.sfo sce_sys/icon0.png sce_module/libc.prx sce_module/libSceFios2.prx"
+            COMMAND "${OPENORBIS}/bin/linux/create-gp4" -out ${pkgdir}/${project}.gp4 --content-id "IV0001-${title-id}_00-${title-id}0000000" --files "eboot.bin sce_sys/param.sfo ${PKG_ASSETS_FILES}"
             # generate pkg
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" pkg_build pkg.gp4 .
+            COMMAND cd ${pkgdir} && "${OPENORBIS}/bin/linux/PkgTool.Core" pkg_build ${project}.gp4 ${CMAKE_BINARY_DIR}
+            # cleanup
+            COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/${project}.gp4
+            COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/eboot.bin
+            COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/sce_sys/param.sfo
             VERBATIM
             DEPENDS "${project}.self"
     )
@@ -115,3 +123,4 @@ function(add_pkg project title-id title version)
             DEPENDS "${project}.pkg"
     )
 endfunction()
+
