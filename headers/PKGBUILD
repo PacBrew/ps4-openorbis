@@ -2,26 +2,27 @@
 
 pkgname=ps4-openorbis-headers
 pkgver=0.5.2
-pkgrel=1
+pkgrel=2
 pkgdesc='headers for ps4 (include crtlib...)'
+gitrev='4ed3bd1deddd4acd874d8c255ba53bbb8bbadeae'
 arch=('any')
 url='https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain'
 license=('GNU GPL')
 options=(!strip libtool)
-source=("https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('76e047cae60729b4471aff69a45191794fe2e09165ef8ed712e5e706bf33fee2')
+source=("https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain/archive/$gitrev.zip")
+sha256sums=('0e74ecd31672f1615cb3fdbaa78ed04b45981c6e1085e3b068087139f4042fc3')
 depends=('ps4-openorbis-clang')
 groups=('ps4-openorbis')
 
 build() {
-  cd OpenOrbis-PS4-Toolchain-$pkgver/src/crt
+  cd OpenOrbis-PS4-Toolchain-$gitrev/src/crt
   /opt/pacbrew/ps4/openorbis/bin/clang -c -o crtlib.o crtlib.c
 }
 
 package() {
   install -d "${pkgdir}"/opt/pacbrew/ps4/openorbis/lib
-  install -m755 OpenOrbis-PS4-Toolchain-$pkgver/src/crt/crtlib.o ${pkgdir}/opt/pacbrew/ps4/openorbis/lib
-  install -m755 OpenOrbis-PS4-Toolchain-$pkgver/link.x ${pkgdir}/opt/pacbrew/ps4/openorbis
-  cp -r OpenOrbis-PS4-Toolchain-$pkgver/include ${pkgdir}/opt/pacbrew/ps4/openorbis
-  cp -r OpenOrbis-PS4-Toolchain-$pkgver/samples ${pkgdir}/opt/pacbrew/ps4/openorbis
+  install -m755 OpenOrbis-PS4-Toolchain-$gitrev/src/crt/crtlib.o ${pkgdir}/opt/pacbrew/ps4/openorbis/lib
+  install -m755 OpenOrbis-PS4-Toolchain-$gitrev/link.x ${pkgdir}/opt/pacbrew/ps4/openorbis
+  cp -r OpenOrbis-PS4-Toolchain-$gitrev/include ${pkgdir}/opt/pacbrew/ps4/openorbis
+  cp -r OpenOrbis-PS4-Toolchain-$gitrev/samples ${pkgdir}/opt/pacbrew/ps4/openorbis
 }
