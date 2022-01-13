@@ -86,10 +86,7 @@ function(add_self project)
 endfunction()
 
 function(add_pkg project pkgdir title-id title version)
-    execute_process(
-            COMMAND bash -c "cd ${pkgdir} && find . -type f | cut -d '/' -f2- | tr '\n' ' '"
-            OUTPUT_VARIABLE PKG_ASSETS_FILES
-    )
+    string(REPLACE "." "" verclean ${version})
     add_custom_command(
             OUTPUT "${project}.pkg"
             # copy required files to binary directory
@@ -100,21 +97,19 @@ function(add_pkg project pkgdir title-id title version)
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_VER --type Utf8 --maxsize 8 --value "${version}"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value 0
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CATEGORY --type Utf8 --maxsize 4 --value "gde"
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo FORMAT --type Utf8 --maxsize 4 --value 'obs'
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "IV0001-${title-id}_00-${title-id}0000000"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo FORMAT --type Utf8 --maxsize 4 --value "obs"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "IV0001-${title-id}_00-${title-id}000${verclean}"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo DOWNLOAD_DATA_SIZE --type Integer --maxsize 4 --value 0
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo SYSTEM_VER --type Integer --maxsize 4 --value 1020
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo TITLE --type Utf8 --maxsize 128 --value "${title}"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo TITLE_ID --type Utf8 --maxsize 12 --value "${title-id}"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo VERSION --type Utf8 --maxsize 8 --value "${version}"
             # generate gp4 file
-            COMMAND "${OPENORBIS}/bin/linux/create-gp4" -out ${pkgdir}/${project}.gp4 --content-id "IV0001-${title-id}_00-${title-id}0000000" --files "eboot.bin sce_sys/param.sfo ${PKG_ASSETS_FILES}"
+            COMMAND "${OPENORBIS}/bin/linux/create-gp4" -out ${pkgdir}/${project}.gp4 --content-id "IV0001-${title-id}_00-${title-id}000${verclean}" --path "${pkgdir}"
             # generate pkg
             COMMAND cd ${pkgdir} && "${OPENORBIS}/bin/linux/PkgTool.Core" pkg_build ${project}.gp4 ${CMAKE_BINARY_DIR}
             # cleanup
             COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/${project}.gp4
-            COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/eboot.bin
-            COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/sce_sys/param.sfo
             VERBATIM
             DEPENDS "${project}.self"
     )
