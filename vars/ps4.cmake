@@ -62,7 +62,7 @@ set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_C_STANDARD_LIBRARIES} -lc++")
 set(CMAKE_EXE_LINKER_FLAGS_INIT
   "-m elf_x86_64 -pie --eh-frame-hdr \
    --script ${OPENORBIS}/link.x \
-   -L${OPENORBIS}/lib")
+   -L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib")
 
 # crt1.o may be already added to LDFLAGS from "ps4vars.sh", so remove LDFLAGS env (todo: find a better way...)
 set(ENV{LDFLAGS} "" CACHE STRING FORCE)
