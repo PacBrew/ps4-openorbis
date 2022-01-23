@@ -80,7 +80,13 @@ set(CMAKE_C_LINK_EXECUTABLE
      ${OPENORBIS}/lib/crtn.o \
   --end-group")
 
-set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE}")
+set(CMAKE_CXX_LINK_EXECUTABLE
+  "<CMAKE_LINKER> -o <TARGET> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> \
+  --start-group \
+     ${OPENORBIS}/lib/crt1.o ${OPENORBIS}/lib/crti.o \
+     <OBJECTS> <LINK_LIBRARIES> \
+     ${OPENORBIS}/lib/crtn.o \
+  --end-group")
 
 # Start find_package in config mode
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
