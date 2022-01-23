@@ -48,7 +48,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_ASM_FLAGS_INIT
   "-target x86_64-pc-freebsd12-elf \
-   -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ \
+   -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -D_BSD_SOURCE \
    -fPIC -funwind-tables \
    -isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include \
    -I${OPENORBIS}/usr/include")

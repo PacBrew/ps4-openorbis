@@ -11,7 +11,7 @@ options=(!strip libtool)
 source=("https://github.com/OpenOrbis/LibOrbisPkg/archive/b91a5262c92f15bfeeb22c53c2d997b96f772c30.zip" "PkgTool.Core")
 sha256sums=(
   'd1438b07978091e1ffccbfabbad50e295b8826a355a514aa1a12542f2c38d802'
-  '8271eb908f314c5dcdde3f91b61b0e0ce565222ced336981bb6d09f1fda5c042'
+  'ec2acf02469f8a3b209b1ab42cb3d9f5104159a52bf07bbe0969c076124e7d5e' # bash script wrapper for PkgTool.Core
 )
 groups=('ps4-openorbis')
 
