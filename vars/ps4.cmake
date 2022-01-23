@@ -46,21 +46,40 @@ set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(PS4_COMMON_INCLUDES "-isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include")
-set(PS4_COMMON_FLAGS "--target=x86_64-pc-freebsd12-elf -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -fPIC -funwind-tables ${PS4_COMMON_INCLUDES}")
-set(PS4_COMMON_LIBS "-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -lc -lkernel")
+set(CMAKE_ASM_FLAGS_INIT
+  "-target x86_64-pc-freebsd12-elf \
+   -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ \
+   -fPIC -funwind-tables \
+   -isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include \
+   -I${OPENORBIS}/usr/include")
 
-set(CMAKE_C_FLAGS_INIT "${PS4_COMMON_FLAGS}")
-set(CMAKE_CXX_FLAGS_INIT "${PS4_COMMON_FLAGS} -I${OPENORBIS}/include/c++/v1")
-set(CMAKE_ASM_FLAGS_INIT "${PS4_COMMON_FLAGS}")
+set(CMAKE_C_FLAGS_INIT "${CMAKE_ASM_FLAGS_INIT}")
+set(CMAKE_CXX_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} -I${OPENORBIS}/include/c++/v1")
 
-set(PS4_LINKER_FLAGS "-m elf_x86_64 -pie --eh-frame-hdr --script ${OPENORBIS}/link.x ${OPENORBIS}/lib/crt1.o")
+set(CMAKE_C_STANDARD_LIBRARIES "-lkernel -lc")
+set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_C_STANDARD_LIBRARIES} -lc++")
+
+set(CMAKE_EXE_LINKER_FLAGS_INIT
+  "-m elf_x86_64 -pie --eh-frame-hdr \
+   --script ${OPENORBIS}/link.x \
+   -L${OPENORBIS}/lib")
+
 # crt1.o may be already added to LDFLAGS from "ps4vars.sh", so remove LDFLAGS env (todo: find a better way...)
 set(ENV{LDFLAGS} "" CACHE STRING FORCE)
 
-set(CMAKE_EXE_LINKER_FLAGS_INIT "${PS4_LINKER_FLAGS} ${PS4_COMMON_LIBS}")
-set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> -o <TARGET> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> <LINK_LIBRARIES>") # <FLAGS>
-set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> -o <TARGET> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  <LINK_LIBRARIES>") # <FLAGS>
+set(CMAKE_ASM_LINK_EXECUTABLE
+  "<CMAKE_LINKER> -o <TARGET> <CMAKE_ASM_LINK_FLAGS> <LINK_FLAGS> --start-group \
+   <OBJECTS> <LINK_LIBRARIES> --end-group")
+
+set(CMAKE_C_LINK_EXECUTABLE
+  "<CMAKE_LINKER> -o <TARGET> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> \
+  --start-group \
+     ${OPENORBIS}/lib/crt1.o ${OPENORBIS}/lib/crti.o \
+     <OBJECTS> <LINK_LIBRARIES> \
+     ${OPENORBIS}/lib/crtn.o \
+  --end-group")
+
+set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_C_LINK_EXECUTABLE}")
 
 # Start find_package in config mode
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
