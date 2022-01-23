@@ -2,23 +2,30 @@
 
 pkgname=ps4-openorbis-pkgtools
 pkgver=0.2.231
-pkgrel=1
+pkgrel=2
 pkgdesc='pkg tools for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/LibOrbisPkg'
 license=('GNU GPL')
 options=(!strip libtool)
-source=("https://github.com/OpenOrbis/LibOrbisPkg/archive/b91a5262c92f15bfeeb22c53c2d997b96f772c30.zip")
-sha256sums=('d1438b07978091e1ffccbfabbad50e295b8826a355a514aa1a12542f2c38d802')
+source=("https://github.com/OpenOrbis/LibOrbisPkg/archive/b91a5262c92f15bfeeb22c53c2d997b96f772c30.zip" "PkgTool.Core")
+sha256sums=(
+  'd1438b07978091e1ffccbfabbad50e295b8826a355a514aa1a12542f2c38d802'
+  '8271eb908f314c5dcdde3f91b61b0e0ce565222ced336981bb6d09f1fda5c042'
+)
 groups=('ps4-openorbis')
 
 build() {
   cd LibOrbisPkg-b91a5262c92f15bfeeb22c53c2d997b96f772c30
-  dotnet publish -c Release LibOrbisPkg.Core.sln
+  dotnet publish -r linux-x64 -c Release LibOrbisPkg.Core.sln
 }
 
 package() {
+  # install PkgTool.Core wrapper script
+  install -d ${pkgdir}/opt/pacbrew/ps4/openorbis/bin/linux/pkgtool
+  install -Dm755 PkgTool.Core ${pkgdir}/opt/pacbrew/ps4/openorbis/bin/linux
+
+  # install PkgTool.Core
   cd LibOrbisPkg-b91a5262c92f15bfeeb22c53c2d997b96f772c30
-  install -d ${pkgdir}/opt/pacbrew/ps4/openorbis/bin/linux
-  cp -R PkgTool.Core/bin/Release/netcoreapp3.0/publish/. ${pkgdir}/opt/pacbrew/ps4/openorbis/bin/linux/
+  cp -R PkgTool.Core/bin/Release/netcoreapp3.0/linux-x64/publish/. ${pkgdir}/opt/pacbrew/ps4/openorbis/bin/linux/pkgtool
 }

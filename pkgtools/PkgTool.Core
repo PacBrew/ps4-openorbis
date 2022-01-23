@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+exec ${OPENORBIS}/bin/linux/pkgtool/PkgTool.Core "$@"
