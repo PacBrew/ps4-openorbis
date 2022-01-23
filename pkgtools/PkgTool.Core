@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-exec ${OPENORBIS}/bin/linux/pkgtool/PkgTool.Core "$@"
+SCRIPTDIR="${BASH_SOURCE[0]}"
+SCRIPTDIR="$(dirname "${SCRIPTDIR}")"
+
+exec ${SCRIPTDIR}/pkgtool/PkgTool.Core "$@"
