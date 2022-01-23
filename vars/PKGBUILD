@@ -11,8 +11,8 @@ options=(!strip)
 groups=('ps4-openorbis')
 
 sha256sums=(
-  'd8ec5b801ccd8897857890b9384d02e48a7f6215efeb88b951082eaa93e7ac03' # ps4vars.sh
-  '01e8378e743c130149af27b59a6c63444a678883b65d6724393110838f7cfea8' # ps4.cmake
+  '7fbdf48fe6279db6e385a92116d3d9ec574b9945e71bd12c7addeb5200a2356c' # ps4vars.sh
+  '9adeb1f2143905e70b9bf99d37d1ab1ff95e1ba4ab13bbacf16427b1113f5abe' # ps4.cmake
   '0a32ce4e9a41e91df50e036f9f22b2aafac2778ae8286b8b7fc84fafb38aa38a' # openorbis-cmake
 )
 

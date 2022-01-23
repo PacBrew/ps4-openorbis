@@ -20,7 +20,8 @@ export PKG_CONFIG_PATH=${OPENORBIS}/usr/lib/pkgconfig
 export PATH=${OPENORBIS}/bin:${OPENORBIS}/usr/bin:$PATH
 
 export ARCH="--target=x86_64-pc-freebsd12-elf"
-export CFLAGS="${ARCH} -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -O2 -fPIC -funwind-tables -isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include"
+export CFLAGS="${ARCH} -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -DPS4 -D__BSD_VISIBLE -D_BSD_SOURCE -O2 -fPIC -funwind-tables"
+export CFLAGS="${CFLAGS} -isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include"
 export CXXFLAGS="${CFLAGS} -isystem ${OPENORBIS}/include/c++/v1"
 export CPPFLAGS="${CFLAGS} -isystem ${OPENORBIS}/include/c++/v1"
 
