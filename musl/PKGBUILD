@@ -2,19 +2,19 @@
 
 pkgname=ps4-openorbis-musl
 pkgver=1.4
-pkgrel=3
+pkgrel=4
 pkgdesc='musl for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/musl'
 license=('MIT')
 options=(!strip libtool)
-source=("https://github.com/OpenOrbis/musl/archive/bc2ceb100c40e5d6bd2752d2ffed532e56e7065a.zip")
-sha256sums=('707ea88487616782af52943a6645926e77ba72d8e96926ee64f855fc84d9fd6e')
+source=("https://github.com/PacBrew/ps4-openorbis-musl/archive/1d8ffc741e3368165106a5d2a57ca312ddf4515b.zip")
+sha256sums=('02986c199d6c1243fcb4cfb85a805f8d4487c5b07c17b2369496d7249bb43338')
 depends=('ps4-openorbis-clang')
 groups=('ps4-openorbis')
 
 build() {
-  cd musl-bc2ceb100c40e5d6bd2752d2ffed532e56e7065a
+  cd ps4-openorbis-musl-1d8ffc741e3368165106a5d2a57ca312ddf4515b
   
   ./configure --target=x86_64-scei-ps4 \
     --prefix=/opt/pacbrew/ps4/openorbis \
@@ -26,7 +26,7 @@ build() {
 }
 
 package() {
-  cd musl-bc2ceb100c40e5d6bd2752d2ffed532e56e7065a
+  cd ps4-openorbis-musl-1d8ffc741e3368165106a5d2a57ca312ddf4515b
   make DESTDIR="${pkgdir}" install
   
   # "ps4-openorbis-libcxx" package will merge compiler-rt into libc
