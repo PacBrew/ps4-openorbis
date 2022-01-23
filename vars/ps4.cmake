@@ -128,6 +128,8 @@ function(add_pkg project pkgdir title-id title version)
             # generate pkg
             COMMAND cd ${pkgdir} && "${OPENORBIS}/bin/linux/PkgTool.Core" pkg_build ${project}.gp4 ${CMAKE_BINARY_DIR}
             # cleanup
+            COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/eboot.bin
+            COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/sce_sys/param.sfo
             COMMAND ${CMAKE_COMMAND} -E remove ${pkgdir}/${project}.gp4
             VERBATIM
             DEPENDS "${project}.self"
