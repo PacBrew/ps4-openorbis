@@ -2,7 +2,7 @@
 
 pkgname=ps4-openorbis-pkgtools
 pkgver=0.2.231
-pkgrel=2
+pkgrel=3
 pkgdesc='pkg tools for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/LibOrbisPkg'
