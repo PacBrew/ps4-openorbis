@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.0)
 
 if (NOT DEFINED ENV{OPENORBIS})
     set(OPENORBIS /opt/pacbrew/ps4/openorbis)
+    set(ENV{OPENORBIS} ${OPENORBIS})
 else ()
     set(OPENORBIS $ENV{OPENORBIS})
 endif ()
