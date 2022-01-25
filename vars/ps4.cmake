@@ -113,7 +113,23 @@ function(add_self project)
 endfunction()
 
 function(add_pkg project pkgdir title-id title version)
-    string(REPLACE "." "" verclean ${version})
+    # Title must not exceed 128 characters
+    string(SUBSTRING "${title}" 0 127 title)
+
+    # Format version string in such a way that is acceptable by the PS4
+    string(SUBSTRING "${version}" 0 7 verclean)
+    string(REGEX MATCH "([0-9]+\\.[0-9]+)" verclean ${verclean})
+    if("${verclean}" STREQUAL "")
+        message(WARNING "The version string '${version}' is formatted in a way that is incompatable with the PS4, using '01.00'")
+        set(version "01.00")
+    endif()
+
+    # Format content-id based on title-id and version
+    string(REPLACE "." "0" vercont ${verclean})
+    string(APPEND vercont "00000000")
+    string(SUBSTRING "${vercont}" 0 7 vercont)
+    set(content_id "IV0001-${title-id}_00-${title-id}${vercont}")
+  
     add_custom_command(
             OUTPUT "${project}.pkg"
             # copy required files to binary directory
@@ -121,18 +137,18 @@ function(add_pkg project pkgdir title-id title version)
             # generate sfo
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_new ${pkgdir}/sce_sys/param.sfo
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_TYPE --type Integer --maxsize 4 --value 1
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_VER --type Utf8 --maxsize 8 --value "${version}"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_VER --type Utf8 --maxsize 8 --value "${verclean}"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value 0
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CATEGORY --type Utf8 --maxsize 4 --value "gde"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo FORMAT --type Utf8 --maxsize 4 --value "obs"
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "IV0001-${title-id}_00-${title-id}000${verclean}"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "${content_id}"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo DOWNLOAD_DATA_SIZE --type Integer --maxsize 4 --value 0
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo SYSTEM_VER --type Integer --maxsize 4 --value 1020
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo TITLE --type Utf8 --maxsize 128 --value "${title}"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo TITLE_ID --type Utf8 --maxsize 12 --value "${title-id}"
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo VERSION --type Utf8 --maxsize 8 --value "${version}"
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo VERSION --type Utf8 --maxsize 8 --value "${verclean}"
             # generate gp4 file
-            COMMAND "${OPENORBIS}/bin/linux/create-gp4" -out ${pkgdir}/${project}.gp4 --content-id "IV0001-${title-id}_00-${title-id}000${verclean}" --path "${pkgdir}"
+            COMMAND "${OPENORBIS}/bin/linux/create-gp4" -out ${pkgdir}/${project}.gp4 --content-id "${content_id}" --path "${pkgdir}"
             # generate pkg
             COMMAND cd ${pkgdir} && "${OPENORBIS}/bin/linux/PkgTool.Core" pkg_build ${project}.gp4 ${CMAKE_BINARY_DIR}
             # cleanup
