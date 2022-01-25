@@ -114,7 +114,7 @@ endfunction()
 
 function(add_pkg project pkgdir title-id title version)
     string(SUBSTRING "${title}" 0 127 title)
-    string(SUBSTRING "${version}" 0 7 title)
+    string(SUBSTRING "${version}" 0 7 version)
     string(MAKE_C_IDENTIFIER "${version}" verclean)
     string(REPLACE "_" "0" verclean ${verclean})
     string(TOUPPER "${verclean}" verclean)
