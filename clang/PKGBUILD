@@ -24,9 +24,11 @@ build() {
     -DLLVM_TARGETS_TO_BUILD="X86" \
     -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-scei-ps4-elf" \
     -DLLVM_ENABLE_PROJECTS="lld;clang" \
+    -DLLVM_ENABLE_LIBCXX=On \
     -DCMAKE_BUILD_TYPE=MinSizeRel \
     -DLLVM_INSTALL_BINUTILS_SYMLINKS=On \
     -DLLVM_INSTALL_CCTOOLS_SYMLINKS=On \
+    -DLLVM_STATIC_LINK_CXX_STDLIB=On \
     -DCMAKE_INSTALL_PREFIX=/opt/pacbrew/ps4/openorbis
     
   cd build  
