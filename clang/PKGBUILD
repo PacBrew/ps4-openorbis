@@ -18,6 +18,9 @@ build() {
   cmake .. \
     -G "Unix Makefiles" \
     -S llvm -B build \
+    -DLLVM_INCLUDE_TESTS=Off \
+    -DLLVM_INCLUDE_EXAMPLES=Off \
+    -DLLVM_INCLUDE_BENCHMARKS=Off \
     -DLLVM_TARGETS_TO_BUILD="X86" \
     -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-scei-ps4-elf" \
     -DLLVM_ENABLE_PROJECTS="lld;clang" \
