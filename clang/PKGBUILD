@@ -2,7 +2,7 @@
 
 pkgname=ps4-openorbis-clang
 pkgver=13.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc='clang for ps4'
 arch=('any')
 url='https://github.com/llvm/llvm-project/'
