@@ -2,11 +2,11 @@
 
 pkgname=ps4-openorbis-clang
 pkgver=13.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc='clang for ps4'
 arch=('any')
 url='https://github.com/llvm/llvm-project/'
-license=('GNU GPL')
+license=('custom:Apache 2.0 with LLVM Exception')
 options=(!strip libtool)
 source=("https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/llvm-project-$pkgver.src.tar.xz")
 sha256sums=('6075ad30f1ac0e15f07c1bf062c1e1268c241d674f11bd32cdf0e040c71f2bf3')
@@ -18,9 +18,17 @@ build() {
   cmake .. \
     -G "Unix Makefiles" \
     -S llvm -B build \
+    -DLLVM_INCLUDE_TESTS=Off \
+    -DLLVM_INCLUDE_EXAMPLES=Off \
+    -DLLVM_INCLUDE_BENCHMARKS=Off \
     -DLLVM_TARGETS_TO_BUILD="X86" \
+    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-scei-ps4-elf" \
     -DLLVM_ENABLE_PROJECTS="lld;clang" \
+    -DLLVM_ENABLE_LIBCXX=On \
     -DCMAKE_BUILD_TYPE=MinSizeRel \
+    -DLLVM_INSTALL_BINUTILS_SYMLINKS=On \
+    -DLLVM_INSTALL_CCTOOLS_SYMLINKS=On \
+    -DLLVM_STATIC_LINK_CXX_STDLIB=On \
     -DCMAKE_INSTALL_PREFIX=/opt/pacbrew/ps4/openorbis
     
   cd build  
