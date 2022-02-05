@@ -2,7 +2,7 @@
 
 pkgname=ps4-openorbis-clang
 pkgver=13.0.0
-pkgrel=2
+pkgrel=3
 pkgdesc='clang for ps4'
 arch=('any')
 url='https://github.com/llvm/llvm-project/'
@@ -22,7 +22,6 @@ build() {
     -DLLVM_INCLUDE_EXAMPLES=Off \
     -DLLVM_INCLUDE_BENCHMARKS=Off \
     -DLLVM_TARGETS_TO_BUILD="X86" \
-    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-scei-ps4-elf" \
     -DLLVM_ENABLE_PROJECTS="lld;clang" \
     -DLLVM_ENABLE_LIBCXX=On \
     -DCMAKE_BUILD_TYPE=MinSizeRel \

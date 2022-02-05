@@ -135,6 +135,9 @@ package() {
   # libcxx
   cd ../../libcxx/build
   make DESTDIR="$pkgdir" install
+  mv $pkgdir/opt/pacbrew/ps4/openorbis/lib/linux/libclang_rt.builtins-x86_64.a \
+    $pkgdir/opt/pacbrew/ps4/openorbis/lib
+  rm -r $pkgdir/opt/pacbrew/ps4/openorbis/lib/linux
   
   # TODO: do not merge libs ?
   # Combine libc++, libc++abi and libunwind into a single archive
@@ -148,13 +151,4 @@ package() {
   echo "SAVE"               >> mri.txt
   echo "END"                >> mri.txt
   /opt/pacbrew/ps4/openorbis/bin/llvm-ar -M < mri.txt && rm mri.txt && rm libc++.a && mv libc++M.a libc++.a
-
-  # Merge compiler-rt into libc
-  touch mri.txt
-  echo "CREATE libc.a"                                    >> mri.txt
-  echo "ADDLIB /opt/pacbrew/ps4/openorbis/lib/libcmusl.a" >> mri.txt
-  echo "ADDLIB linux/libclang_rt.builtins-x86_64.a"       >> mri.txt
-  echo "SAVE"                                             >> mri.txt
-  echo "END"                                              >> mri.txt
-  /opt/pacbrew/ps4/openorbis/bin/llvm-ar -M < mri.txt && rm mri.txt
 }

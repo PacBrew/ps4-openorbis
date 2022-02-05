@@ -25,6 +25,6 @@ export CFLAGS="${CFLAGS} -isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I
 export CXXFLAGS="${CFLAGS} -isystem ${OPENORBIS}/include/c++/v1"
 export CPPFLAGS="${CFLAGS} -isystem ${OPENORBIS}/include/c++/v1"
 
-export LIBS="-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -lc -lkernel"
+export LIBS="-L${OPENORBIS}/lib -L${OPENORBIS}/usr/lib -lc -lclang_rt.builtins-x86_64 -lkernel -lSceLibcInternal"
 export LDFLAGS="${ARCH} -fuse-ld=lld -Wl,-melf_x86_64 -Wl,-pie -Wl,--script=${OPENORBIS}/link.x -Wl,--eh-frame-hdr ${LIBS} -nostdlib"
 #${OPENORBIS}/lib/crt1.o

@@ -58,7 +58,7 @@ set(CMAKE_ASM_FLAGS_INIT
 set(CMAKE_C_FLAGS_INIT "${CMAKE_ASM_FLAGS_INIT}")
 set(CMAKE_CXX_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} -I${OPENORBIS}/include/c++/v1")
 
-set(CMAKE_C_STANDARD_LIBRARIES "-lkernel -lc")
+set(CMAKE_C_STANDARD_LIBRARIES "-lkernel -lc -lclang_rt.builtins-x86_64 -lSceLibcInternal")
 set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_C_STANDARD_LIBRARIES} -lc++")
 
 set(CMAKE_EXE_LINKER_FLAGS_INIT
@@ -138,7 +138,7 @@ function(add_pkg project pkgdir title-id title version)
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_new ${pkgdir}/sce_sys/param.sfo
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_TYPE --type Integer --maxsize 4 --value 1
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_VER --type Utf8 --maxsize 8 --value "${verclean}"
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value 0
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value 65536
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CATEGORY --type Utf8 --maxsize 4 --value "gde"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo FORMAT --type Utf8 --maxsize 4 --value "obs"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "${content_id}"
