@@ -129,6 +129,8 @@ function(add_pkg project pkgdir title-id title version)
     string(APPEND vercont "00000000")
     string(SUBSTRING "${vercont}" 0 7 vercont)
     set(content_id "IV0001-${title-id}_00-${title-id}${vercont}")
+    # export pkg name for end user
+    set(PKG_OUT_NAME "${content_id}.pkg" CACHE STRING "ps4 pkg name" FORCE)
   
     add_custom_command(
             OUTPUT "${project}.pkg"
