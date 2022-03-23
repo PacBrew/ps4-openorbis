@@ -121,7 +121,7 @@ function(add_pkg project pkgdir title-id title version)
     string(REGEX MATCH "([0-9]+\\.[0-9]+)" verclean ${verclean})
     if("${verclean}" STREQUAL "")
         message(WARNING "The version string '${version}' is formatted in a way that is incompatable with the PS4, using '01.00'")
-        set(version "01.00")
+        set(verclean "01.00")
     endif()
 
     # Format content-id based on title-id and version
