@@ -2,17 +2,27 @@
 
 pkgname=ps4-openorbis-orbis-lib-gen
 pkgver=1.2
-pkgrel=1
+pkgrel=2
 pkgdesc='libs for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/orbis-lib-gen'
 license=('GNU GPL')
 options=(!strip libtool)
-source=("https://github.com/OpenOrbis/orbis-lib-gen/releases/download/v$pkgver/lib.tar.gz")
-sha256sums=('52286fdec9e2a7cacda98c9727803d9dbb8eea07544b501b70b5a64d236393e7')
+source=(
+  "https://github.com/OpenOrbis/orbis-lib-gen/releases/download/v$pkgver/lib.tar.gz"
+  "libSceLibcInternal.so"
+)
+sha256sums=(
+  '52286fdec9e2a7cacda98c9727803d9dbb8eea07544b501b70b5a64d236393e7'
+  'b13d45fb931c6eb3515bf5c3eafd8d0ca028b9af0dd32807760d6ce1c0cce617'
+)
 groups=('ps4-openorbis')
 
 package() {
   mkdir -p "$pkgdir"/opt/pacbrew/ps4/openorbis/lib
   cp lib/* "$pkgdir"/opt/pacbrew/ps4/openorbis/lib
+
+  # we need a stripped version of "libSceLibcInternal.so" (without malloc and such)
+  # so malloc (and such) are always called from musl wrapper (for mini apps)
+  cp ${srcdir}/libSceLibcInternal.so ${pkgdir}/opt/pacbrew/ps4/openorbis/lib
 }
