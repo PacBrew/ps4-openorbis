@@ -33,6 +33,19 @@ set(CMAKE_AR ${OPENORBIS}/bin/llvm-ar CACHE PATH "")
 set(CMAKE_RANLIB ${OPENORBIS}/bin/llvm-ranlib CACHE PATH "")
 set(CMAKE_STRIP ${OPENORBIS}/bin/llvm-strip CACHE PATH "")
 
+# We use the linker directly instead of using the llvm wrapper.
+# CMake uses `-Xlinker` for passing llvm linker flags
+# added via `add_link_options(... "LINKER:...")`.
+# Force the correct linker flag generation:
+macro(reset_linker_wrapper_flag)
+    set(CMAKE_ASM_LINKER_WRAPPER_FLAG "")
+    set(CMAKE_C_LINKER_WRAPPER_FLAG "")
+    set(CMAKE_CXX_LINKER_WRAPPER_FLAG "")
+endmacro()
+variable_watch(CMAKE_ASM_LINKER_FLAG reset_linker_wrapper_flag)
+variable_watch(CMAKE_C_LINKER_WRAPPER_FLAG reset_linker_wrapper_flag)
+variable_watch(CMAKE_CXX_LINKER_WRAPPER_FLAG reset_linker_wrapper_flag)
+
 set(CMAKE_LIBRARY_ARCHITECTURE x86_64 CACHE INTERNAL "abi")
 
 set(CMAKE_FIND_ROOT_PATH ${OPENORBIS} ${OPENORBIS}/usr)
