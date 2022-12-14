@@ -2,7 +2,7 @@
 
 pkgname=ps4-openorbis-vars
 pkgver=1.0.0
-pkgrel=21
+pkgrel=22
 pkgdesc='helper scripts to set variables for ps4 toolchain'
 arch=('any')
 url='https://github.com/PacBrew'
@@ -12,7 +12,7 @@ groups=('ps4-openorbis')
 
 sha256sums=(
   '4016780d7ec29e737b4202ef8b5ee18eae91afc4900e9adcbb91b5eb9eeb9ccf' # ps4vars.sh
-  '611882ab6c3d6b9aeec86518a3f18e897ab14deb5d189252478f42f1e132fefe' # ps4.cmake
+  '8c99d455530a0cca045aea88d6076bd3819c3fcf2c55bdc52e71359a64187b13' # ps4.cmake
   '0a32ce4e9a41e91df50e036f9f22b2aafac2778ae8286b8b7fc84fafb38aa38a' # openorbis-cmake
 )
 
