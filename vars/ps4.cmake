@@ -144,6 +144,10 @@ function(add_pkg project pkgdir title-id title version)
     set(content_id "IV0001-${title-id}_00-${title-id}${vercont}")
     # export pkg name for end user
     set(PKG_OUT_NAME "${content_id}.pkg" CACHE STRING "ps4 pkg name" FORCE)
+    set(attribute 0)
+    if(${ARGC} GREATER 5)
+        set(attribute ${ARGV5})
+    endif()
   
     add_custom_command(
             OUTPUT "${project}.pkg"
@@ -153,7 +157,7 @@ function(add_pkg project pkgdir title-id title version)
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_new ${pkgdir}/sce_sys/param.sfo
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_TYPE --type Integer --maxsize 4 --value 1
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo APP_VER --type Utf8 --maxsize 8 --value "${verclean}"
-            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value 65536
+            COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo ATTRIBUTE --type Integer --maxsize 4 --value ${attribute}
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CATEGORY --type Utf8 --maxsize 4 --value "gde"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo FORMAT --type Utf8 --maxsize 4 --value "obs"
             COMMAND "${OPENORBIS}/bin/linux/PkgTool.Core" sfo_setentry ${pkgdir}/sce_sys/param.sfo CONTENT_ID --type Utf8 --maxsize 48 --value "${content_id}"
