@@ -19,6 +19,9 @@ export PKG_CONFIG=${OPENORBIS}/usr/bin/openorbis-pkg-config
 export PKG_CONFIG_PATH=${OPENORBIS}/usr/lib/pkgconfig
 export PATH=${OPENORBIS}/bin:${OPENORBIS}/usr/bin:$PATH
 
+# for dotnet/pkgtools
+export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
 export ARCH="--target=x86_64-pc-freebsd12-elf"
 export CFLAGS="${ARCH} -D__PS4__ -D__OPENORBIS__ -D__ORBIS__ -DPS4 -D__BSD_VISIBLE -D_BSD_SOURCE -O2 -fPIC -funwind-tables"
 export CFLAGS="${CFLAGS} -isysroot ${OPENORBIS} -isystem ${OPENORBIS}/include -I${OPENORBIS}/usr/include"
