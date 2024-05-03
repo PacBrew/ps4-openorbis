@@ -7,7 +7,7 @@ pkgdesc='libs for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/orbis-lib-gen'
 license=('GNU GPL')
-options=(!strip libtool)
+options=(!debug !strip libtool)
 source=(
   "https://github.com/OpenOrbis/orbis-lib-gen/releases/download/v$pkgver/lib.tar.gz"
   "libSceLibcInternal.so"
