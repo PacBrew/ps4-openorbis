@@ -1,8 +1,8 @@
 # Maintainer: cpasjuste <cpasjuste@gmail.com>
 
 pkgname=ps4-openorbis-orbis-lib-gen
-pkgver=1.2
-pkgrel=2
+pkgver=1.3
+pkgrel=1
 pkgdesc='libs for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/orbis-lib-gen'
@@ -13,7 +13,7 @@ source=(
   "libSceLibcInternal.so"
 )
 sha256sums=(
-  '52286fdec9e2a7cacda98c9727803d9dbb8eea07544b501b70b5a64d236393e7'
+  '050b4898510dc6836c0d14a54d740c81be9ce376b1f2f8a5e57699eb82d584cf'
   'b13d45fb931c6eb3515bf5c3eafd8d0ca028b9af0dd32807760d6ce1c0cce617'
 )
 groups=('ps4-openorbis')
