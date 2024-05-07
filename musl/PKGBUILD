@@ -2,16 +2,19 @@
 
 pkgname=ps4-openorbis-musl
 pkgver=1.5
-pkgrel=1
+pkgrel=2
 pkgdesc='musl for ps4'
 arch=('any')
 url='https://github.com/PacBrew/ps4-openorbis-musl'
 license=('MIT')
-options=(!strip libtool)
+options=(!debug !strip libtool)
 source=("https://github.com/PacBrew/ps4-openorbis-musl/archive/140a653299ffcb1457bc63a5ab1f507d7bb37c54.zip")
 sha256sums=('6094df1c1f37f56392fd1b30f67222976268b940a174219ff42731e27c7e0a6b')
 depends=('ps4-openorbis-clang')
-groups=('ps4-openorbis')
+groups=(
+  'pacbrew' 'pacbrew-ps4' 'pacbrew-ps4-toolchain' 
+  'ps4-openorbis' # for backward compatibility
+)
 
 build() {
   cd ps4-openorbis-musl-140a653299ffcb1457bc63a5ab1f507d7bb37c54

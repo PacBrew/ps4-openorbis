@@ -2,19 +2,22 @@
 
 pkgname=ps4-openorbis-pkgtools
 pkgver=0.2.231
-pkgrel=4
+pkgrel=5
 pkgdesc='pkg tools for ps4'
 arch=('any')
 url='https://github.com/OpenOrbis/LibOrbisPkg'
 license=('GNU GPL')
-options=(!strip libtool)
+options=(!debug !strip libtool)
 commit=('594021fdc435409f755a6ae0781b65ec6cec846c')
 source=("https://github.com/OpenOrbis/LibOrbisPkg/archive/${commit}.zip" "PkgTool.Core")
 sha256sums=(
   'd6084ef02a5841db2866c04c6d010477fd04a31c795c8070b535ad2a7c8ef565'
   'ec2acf02469f8a3b209b1ab42cb3d9f5104159a52bf07bbe0969c076124e7d5e' # bash script wrapper for PkgTool.Core
 )
-groups=('ps4-openorbis')
+groups=(
+  'pacbrew' 'pacbrew-ps4' 'pacbrew-ps4-toolchain' 
+  'ps4-openorbis' # for backward compatibility
+)
 
 build() {
   cd LibOrbisPkg-${commit}

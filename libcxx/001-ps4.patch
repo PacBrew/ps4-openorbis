@@ -1,0 +1,158 @@
+diff --git a/llvm-project-12.0.1.src/libcxx/include/__config b/llvm-project-12.0.1.src-ps4/libcxx/include/__config
+index a3838c8..a031f63 100644
+--- a/llvm-project-12.0.1.src/libcxx/include/__config
++++ b/llvm-project-12.0.1.src-ps4/libcxx/include/__config
+@@ -251,7 +251,7 @@
+ #  endif // __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+ #endif // __BYTE_ORDER__
+ 
+-#ifdef __FreeBSD__
++#if defined(__FreeBSD__) && !defined(__PS4__)
+ #  include <sys/endian.h>
+ #  include <osreldate.h>
+ #  if _BYTE_ORDER == _LITTLE_ENDIAN
+@@ -1117,7 +1117,9 @@ extern "C" _LIBCPP_FUNC_VIS void __sanitizer_annotate_contiguous_container(
+ #endif
+ 
+ // Thread API
+-#if !defined(_LIBCPP_HAS_NO_THREADS) && \
++#if defined(__PS4__)
++#  define _LIBCPP_HAS_THREAD_API_PTHREAD
++#elif !defined(_LIBCPP_HAS_NO_THREADS) && \
+     !defined(_LIBCPP_HAS_THREAD_API_PTHREAD) && \
+     !defined(_LIBCPP_HAS_THREAD_API_WIN32) && \
+     !defined(_LIBCPP_HAS_THREAD_API_EXTERNAL)
+diff --git a/llvm-project-12.0.1.src/libcxx/include/__config_site.in b/llvm-project-12.0.1.src-ps4/libcxx/include/__config_site.in
+index ec4d410..e7935f1 100644
+--- a/llvm-project-12.0.1.src/libcxx/include/__config_site.in
++++ b/llvm-project-12.0.1.src-ps4/libcxx/include/__config_site.in
+@@ -9,6 +9,10 @@
+ #ifndef _LIBCPP_CONFIG_SITE
+ #define _LIBCPP_CONFIG_SITE
+ 
++#ifdef __PS4__
++#  undef __FreeBSD__
++#endif
++
+ #cmakedefine _LIBCPP_ABI_VERSION @_LIBCPP_ABI_VERSION@
+ #cmakedefine _LIBCPP_ABI_UNSTABLE
+ #cmakedefine _LIBCPP_ABI_FORCE_ITANIUM
+diff --git a/llvm-project-12.0.1.src/libcxx/include/__threading_support b/llvm-project-12.0.1.src-ps4/libcxx/include/__threading_support
+index de572f3..3ccb0ba 100644
+--- a/llvm-project-12.0.1.src/libcxx/include/__threading_support
++++ b/llvm-project-12.0.1.src-ps4/libcxx/include/__threading_support
+@@ -41,6 +41,10 @@
+ # include <threads.h>
+ #endif
+ 
++#if defined(__PS4__)
++# include <orbis/libkernel.h>
++#endif
++
+ #if defined(_LIBCPP_HAS_THREAD_LIBRARY_EXTERNAL) || \
+     defined(_LIBCPP_BUILDING_THREAD_LIBRARY_EXTERNAL) || \
+     defined(_LIBCPP_HAS_THREAD_API_WIN32)
+diff --git a/llvm-project-12.0.1.src/libcxx/include/cmath b/llvm-project-12.0.1.src-ps4/libcxx/include/cmath
+index 138ae6f..70c6231 100644
+--- a/llvm-project-12.0.1.src/libcxx/include/cmath
++++ b/llvm-project-12.0.1.src-ps4/libcxx/include/cmath
+@@ -307,6 +307,7 @@ constexpr long double lerp(long double a, long double b, long double t) noexcept
+ #include <__config>
+ #include <math.h>
+ #include <version>
++#include <limits>
+ #include <type_traits>
+ 
+ #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+diff --git a/llvm-project-12.0.1.src/libcxx/include/cstddef b/llvm-project-12.0.1.src-ps4/libcxx/include/cstddef
+index 2a0bfeb..152e94c 100644
+--- a/llvm-project-12.0.1.src/libcxx/include/cstddef
++++ b/llvm-project-12.0.1.src-ps4/libcxx/include/cstddef
+@@ -41,7 +41,11 @@ Types:
+ #endif
+ 
+ // Don't include our own <stddef.h>; we don't want to declare ::nullptr_t.
++#ifdef __PS4__
++#include <stddef.h>
++#else
+ #include_next <stddef.h>
++#endif
+ #include <__nullptr>
+ 
+ _LIBCPP_BEGIN_NAMESPACE_STD
+diff --git a/llvm-project-12.0.1.src/libcxx/include/locale b/llvm-project-12.0.1.src-ps4/libcxx/include/locale
+index 9a705c7..711606b 100644
+--- a/llvm-project-12.0.1.src/libcxx/include/locale
++++ b/llvm-project-12.0.1.src-ps4/libcxx/include/locale
+@@ -811,19 +811,31 @@ _Tp __do_strtod(const char* __a, char** __p2);
+ template <>
+ inline _LIBCPP_INLINE_VISIBILITY
+ float __do_strtod<float>(const char* __a, char** __p2) {
++#ifdef __PS4__
++    return strtof(__a, __p2);
++#else
+     return strtof_l(__a, __p2, _LIBCPP_GET_C_LOCALE);
++#endif
+ }
+ 
+ template <>
+ inline _LIBCPP_INLINE_VISIBILITY
+ double __do_strtod<double>(const char* __a, char** __p2) {
++#ifdef __PS4__
++    return strtod(__a, __p2);
++#else
+     return strtod_l(__a, __p2, _LIBCPP_GET_C_LOCALE);
++#endif
+ }
+ 
+ template <>
+ inline _LIBCPP_INLINE_VISIBILITY
+ long double __do_strtod<long double>(const char* __a, char** __p2) {
++#ifdef __PS4__
++    return strtold(__a, __p2);
++#else
+     return strtold_l(__a, __p2, _LIBCPP_GET_C_LOCALE);
++#endif
+ }
+ 
+ template <class _Tp>
+diff --git a/llvm-project-12.0.1.src/libcxx/src/atomic.cpp b/llvm-project-12.0.1.src-ps4/libcxx/src/atomic.cpp
+index 9ae1fb5..15c3196 100644
+--- a/llvm-project-12.0.1.src/libcxx/src/atomic.cpp
++++ b/llvm-project-12.0.1.src-ps4/libcxx/src/atomic.cpp
+@@ -16,7 +16,9 @@
+ #ifdef __linux__
+ 
+ #include <unistd.h>
++#ifndef __PS4__
+ #include <linux/futex.h>
++#endif
+ #include <sys/syscall.h>
+ 
+ // libc++ uses SYS_futex as a universal syscall name. However, on 32 bit architectures
+@@ -33,7 +35,7 @@
+ 
+ _LIBCPP_BEGIN_NAMESPACE_STD
+ 
+-#ifdef __linux__
++#if defined(__linux__) && !defined(__PS4__)
+ 
+ static void __libcpp_platform_wait_on_address(__cxx_atomic_contention_t const volatile* __ptr,
+                                               __cxx_contention_t __val)
+diff --git a/llvm-project-12.0.1.src/libcxx/src/filesystem/operations.cpp b/llvm-project-12.0.1.src-ps4/libcxx/src/filesystem/operations.cpp
+index 50a895d..418ae75 100644
+--- a/llvm-project-12.0.1.src/libcxx/src/filesystem/operations.cpp
++++ b/llvm-project-12.0.1.src-ps4/libcxx/src/filesystem/operations.cpp
+@@ -29,10 +29,10 @@
+ #include <time.h>
+ #include <fcntl.h> /* values for fchmodat */
+ 
+-#if __has_include(<sys/sendfile.h>)
++#if __has_include(<sys/sendfile.h>) && !defined(__PS4__)
+ # include <sys/sendfile.h>
+ # define _LIBCPP_FILESYSTEM_USE_SENDFILE
+-#elif defined(__APPLE__) || __has_include(<copyfile.h>)
++#elif defined(__APPLE__) || __has_include(<copyfile.h>) && !defined(__PS4__)
+ # include <copyfile.h>
+ # define _LIBCPP_FILESYSTEM_USE_COPYFILE
+ #else
